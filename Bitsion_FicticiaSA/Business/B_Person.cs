@@ -24,6 +24,14 @@ namespace Business
             }
         }
 
+        public static List<PersonEntity> SearchProduct(string value)
+        {
+            using (var db = new FicticiaDBContext())
+            {
+                return db.Persons.Where(p => p.name.Contains(value) || p.surname.Contains(value) || p.identification.ToString().Contains(value)).ToList();
+            }
+        }
+
         public static void CreatePerson(PersonEntity p)
 		{
             using(var db = new FicticiaDBContext())

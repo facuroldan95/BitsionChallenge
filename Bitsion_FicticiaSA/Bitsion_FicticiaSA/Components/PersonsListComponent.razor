@@ -1,6 +1,10 @@
 ﻿@using Entities
 @using Business
 
+<hr />
+<label class="col-form-label">Buscador</label>
+<input type="text" @bind="strProduct" @oninput="SearchProduct" />
+<hr />
 <table class="table table-hover table-bordered">
     <thead>
         <tr>
@@ -37,10 +41,23 @@
 
 @code {
     List<PersonEntity> persons = new List<PersonEntity>();
+    private string strProduct;
 
     protected override async Task OnInitializedAsync()
     {
         persons = B_Person.PersonsList();
-        
+
+    }
+
+    private void SearchProduct(ChangeEventArgs e)
+    {
+        if (e.Value.ToString().Equals(string.Empty))
+        {
+            persons = B_Person.PersonsList();
+        }
+        else
+        {
+            persons = B_Person.SearchProduct(e.Value.ToString());
+        }
     }
 }
