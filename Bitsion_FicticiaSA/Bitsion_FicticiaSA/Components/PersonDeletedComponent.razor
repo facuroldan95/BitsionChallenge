@@ -1,0 +1,47 @@
+﻿@using Entities
+@using Business
+
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre y Apellido</th>
+            <th>Edad</th>
+            <th>Genero</th>
+            <th>Conductor</th>
+            <th>Diabetico</th>
+            <th>Otras Enfermedades</th>
+            <th>Opciones</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in persons)
+        {
+            <tr>
+                <td>@p.identification</td>
+                <td>@p.name @p.surname</td>
+                <td>@p.ObtainAge()</td>
+                <td>@B_Gender.GenderById(p.gender).genderName</td>
+                <td>@p.ToBooleanString(p.isDriver)</td>
+                <td>@p.ToBooleanString(p.isDiabetic)</td>
+                <td>@p.ToBooleanString(p.otherDisease)</td>
+                <td>@p.ToBooleanString(p.isActive)</td>
+                <td>
+                    <a class="btn btn-info" href="person/update/@p.identification ">Editar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    List<PersonEntity> persons = new List<PersonEntity>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        persons = B_Person.PersonsDeleteds();
+
+    }
+}

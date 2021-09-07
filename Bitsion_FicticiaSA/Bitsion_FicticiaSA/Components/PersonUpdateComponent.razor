@@ -1,0 +1,115 @@
+﻿@using Entities
+@using Business
+
+@inject NavigationManager NavManager
+@inject IJSRuntime JsRuntime
+
+<center>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <EditForm Model="person" OnValidSubmit="@SavePerson">
+                        <DataAnnotationsValidator />
+
+                        <div class="container" style="text-align:center">
+                            <div class="form-group">
+                                <label>Identificación:</label>
+                                <InputNumber @bind-Value="person.identification" placeholder="Ingrese la identificación" readonly class="form-control"></InputNumber>
+                                <ValidationMessage For="@(() => person.identification)" />
+                            </div>
+                            <div class="form-group">
+                                <label>Nombre:</label>
+                                <InputText @bind-Value="person.name" placeholder="Nombre:" class="form-control"></InputText>
+                                <ValidationMessage For="@(() => person.name)" />
+                            </div>
+                            <div class="form-group">
+                                <label>Apellido:</label>
+                                <InputText @bind-Value="person.surname" placeholder="Apellido:" class="form-control"></InputText>
+                                <ValidationMessage For="@(() => person.surname)" />
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de Nacimiento:</label>
+                                <InputDate @bind-Value="person.birthdayDate" placeholder="EDAD" class="form-control"></InputDate>
+                                <ValidationMessage For="@(() => person.birthdayDate)" />
+                            </div>
+                            <div class="form-group">
+                                <label>Genero:</label>
+                                <InputSelectNumber @bind-Value="person.gender" class="form-control">
+                                    @foreach (var g in genders)
+                                    {
+
+                                        <option value="@g.genderId">@g.genderName</option>
+                                    }
+                                </InputSelectNumber>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <label>¿Conductor?</label>
+                                <InputCheckbox @bind-Value="person.isDriver" class="form-control"></InputCheckbox>
+                            </div>
+                            <div class="form-group">
+                                <label>¿Diabetico?</label>
+                                <InputCheckbox @bind-Value="person.isDiabetic" class="form-control"></InputCheckbox>
+                            </div>
+                            <div class="form-group">
+                                <label>¿Otras enfermedades?</label>
+                                <InputCheckbox @bind-Value="person.otherDisease" class="form-control"></InputCheckbox>
+                            </div>
+                            @if (person.otherDisease)
+                            {
+                                <div class="form-group">
+                                    <label>Detalle aquí las enfermedades que padece.</label>
+                                    <InputTextArea @bind-Value="person.disease" class="form-control"></InputTextArea>
+                                    <ValidationMessage For="@(() => person.disease)" />
+                                </div>
+                            }
+                            <div class="form-group">
+                                <label>¿Habilitado?</label>
+                                <InputCheckbox @bind-Value="person.isActive" class="form-control"></InputCheckbox>
+                            </div>
+                            <hr />
+                            <input class="btn btn-info" type="submit" value="Actualizar Persona" />
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</center>
+@code {
+    [Parameter]
+    public string personId { get; set; }
+
+    PersonEntity person = new PersonEntity();
+    List<GenderEntity> genders = new List<GenderEntity>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        person = B_Person.PersonByIdentification(Convert.ToInt32(personId));
+        person.birthdayDate = DateTime.Today.AddYears(-18);
+        genders = B_Gender.GendersList();
+    }
+
+    private async Task SavePerson()
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirmed", "Confirmación", "¿Seguro que deseas actualizar esta persona?", "question");
+        if (confirmed)
+        {
+            try
+            {
+                await JsRuntime.InvokeAsync<bool>("Alert", "Se actualizó con éxito", "success");
+            }
+            catch (Exception)
+            {
+                
+            }
+
+            if (!person.otherDisease)
+                person.disease = "N/A";
+            B_Person.UpdatePerson(person);
+            NavManager.NavigateTo("/");
+        }
+    }
+
+}

@@ -1,0 +1,13 @@
+﻿@page "/person/update/{personId}"
+
+<PersonUpdateComponent personId="@personId" />
+
+@code {
+    [Parameter]
+    public string personId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        personId = personId;
+    }
+}
