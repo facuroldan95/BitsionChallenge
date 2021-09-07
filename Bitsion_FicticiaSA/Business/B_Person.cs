@@ -24,7 +24,7 @@ namespace Business
             }
         }
 
-        public static List<PersonEntity> SearchProduct(string value)
+        public static List<PersonEntity> SearchPerson(string value)
         {
             using (var db = new FicticiaDBContext())
             {
