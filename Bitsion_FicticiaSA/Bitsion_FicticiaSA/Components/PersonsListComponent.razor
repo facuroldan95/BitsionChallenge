@@ -49,7 +49,7 @@
 
     }
 
-    private void SearchProduct(ChangeEventArgs e)
+    private void SearchPerson(ChangeEventArgs e)
     {
         if (e.Value.ToString().Equals(string.Empty))
         {
@@ -57,7 +57,7 @@
         }
         else
         {
-            persons = B_Person.SearchProduct(e.Value.ToString());
+            persons = B_Person.SearchPerson(e.Value.ToString());
         }
     }
 }
